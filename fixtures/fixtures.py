@@ -2,8 +2,9 @@ from typing import Any, Generator
 import os
 import pytest
 from playwright.sync_api import Page, Browser, BrowserContext
-
+from pathlib import Path
 from utils.utils import load_config
+from pytest_html import extras
 
 
 @pytest.fixture(scope="session")
@@ -76,14 +77,32 @@ def pwcontext(browser: Browser, browser_config, base_url) -> Generator[BrowserCo
     yield context
     context.close()
 
-
 @pytest.fixture
-def page(pwcontext: BrowserContext, test_config) -> Generator[Page, Any, Any]:
-    """Create a new page for each test"""
+def page(pwcontext: BrowserContext, test_config, request) -> Generator[Page, Any, Any]:
+    """Create a new page for each test with failure capture"""
+    
     page = pwcontext.new_page()
     page.set_default_timeout(test_config.get("timeout", 30000))
     
     yield page
+    
+    if hasattr(request.node, 'rep_call'):
+        if request.node.rep_call.failed :
+            try:
+                reports_dir = Path("reports")
+                reports_dir.mkdir(exist_ok=True)
+                
+                test_name = request.node.name
+                html_filename = f"{test_name}_failure.html"
+                html_path = reports_dir / html_filename
+                
+                html_content = page.content()
+                with open(html_path, 'w', encoding='utf-8') as f:
+                    f.write(html_content)
+                
+                print(f"HTML saved to: {html_path}")
+            except Exception as e:
+                print(f"Failed to capture HTML: {e}")
     
     page.close()
 

@@ -1,0 +1,6 @@
+{
+    "base_url": "https://www.kiwi.com/en/",
+    "api_base_url": "",
+    "timeout": 20000,
+    "retry_attempts": 2
+}

@@ -1,0 +1,10 @@
+{
+    "browser": "chromium",
+    "headless": false,
+    "viewport": {
+        "width": 1920,
+        "height": 1080
+    },
+    "timeout": 30000,
+    "slow_mo": 0
+}

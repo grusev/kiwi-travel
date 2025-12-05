@@ -1,0 +1,7 @@
+{
+    "screenshot_on_failure": true,
+    "video_on_failure": false,
+    "trace_on_failure": false,
+    "html_report": true,
+    "report_path": "reports/report.html"
+}

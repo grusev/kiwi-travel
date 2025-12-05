@@ -1,4 +1,5 @@
 from typing import Any, Generator
+import os
 import pytest
 from playwright.sync_api import Page, Browser, BrowserContext
 
@@ -7,8 +8,15 @@ from utils.utils import load_config
 
 @pytest.fixture(scope="session")
 def browser_config():
-    """Load browser configuration"""
-    return load_config("browser.json")
+    """Load browser configuration and override settings for CI environment"""
+    config = load_config("browser.json")
+    
+    # Detect if running in GitHub actions and adjust settings
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        config["headless"] = True
+        config["browser"] = "chromium"
+    
+    return config
 
 
 @pytest.fixture(scope="session")
